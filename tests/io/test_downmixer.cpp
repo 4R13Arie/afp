@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "afp/io/io.hpp"
 #include "afp/util/util.hpp"
-#include "test_utils.hpp"
+#include "test_utils_io.hpp"
 
 using afp::util::PcmSpan;
 using afp::util::SampleRateHz;

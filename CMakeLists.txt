@@ -106,7 +106,9 @@ afp_apply_sanitizers(afp_exe)
 if (BUILD_TESTING)
     # Test sources (split per module as suggested)
     set(AFP_TEST_SOURCES
-            tests/io/test_utils.hpp
+            tests/dsp/test_dsp_highpass.cpp
+
+            tests/io/test_utils_io.hpp
             tests/io/test_downmixer.cpp
             tests/io/test_normalize.cpp
             tests/io/test_wav.cpp
