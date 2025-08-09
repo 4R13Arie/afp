@@ -112,7 +112,6 @@ if (BUILD_TESTING)
             tests/dsp/test_dsp_preemphasis.cpp
             tests/dsp/test_dsp_resampler.cpp
 
-            tests/io/test_utils_io.hpp
             tests/io/test_downmixer.cpp
             tests/io/test_normalize.cpp
             tests/io/test_wav.cpp
@@ -120,6 +119,12 @@ if (BUILD_TESTING)
             tests/io/test_flac.cpp
             tests/io/test_composite.cpp
             tests/io/test_edgecases.cpp
+
+            tests/stft/test_stft_framer.cpp
+            tests/stft/test_stft_window.cpp
+            tests/stft/test_stft_fft.cpp
+            tests/stft/test_stft_driver.cpp
+            tests/stft/test_stft_factory.cpp
     )
 
     add_executable(afp_tests ${AFP_TEST_SOURCES})
