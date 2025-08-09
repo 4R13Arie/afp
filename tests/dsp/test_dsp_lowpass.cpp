@@ -78,18 +78,26 @@ TEST(LowPass, LPF_cutoff_clamping_behavior) {
   auto lpf = F()->create_lpf();
 
   const float nyq = 0.5f * float(sr);
+
+  // Near‑Nyquist, valid
   auto yA = lpf->process(in, {nyq * 0.999f, 0.707f});
   ASSERT_TRUE(yA.has_value());
-  auto yB = lpf->process(in, {nyq * 1.05f, 0.707f});
-  ASSERT_TRUE(yB.has_value());
 
+  // Above Nyquist should be rejected per API contract
+  auto yB = lpf->process(in, {nyq * 1.05f, 0.707f});
+  ASSERT_FALSE(yB.has_value());
+  EXPECT_EQ(yB.error(), afp::util::UtilError::InvalidArgument);
+
+  // Compare two close valid cutoffs to ensure small difference
+  auto yC = lpf->process(in, {nyq * 0.995f, 0.707f});
+  ASSERT_TRUE(yC.has_value());
+  ASSERT_EQ(yA->samples.size(), yC->samples.size());
   float diff = 0.0f;
-  for (size_t i = 0; i < yA->samples.size(); ++i) diff = std::max(
-                                                      diff, std::abs(
-                                                          yA->samples[i] - yB->
-                                                          samples[i]));
+  for (size_t i = 0; i < yA->samples.size(); ++i)
+    diff = std::max(diff, std::abs(yA->samples[i] - yC->samples[i]));
   EXPECT_LT(diff, 1e-3f);
 }
+
 
 TEST(LowPass, LPF_stateless_repeatability) {
   const auto sr = 44100u;

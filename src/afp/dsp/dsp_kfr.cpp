@@ -105,29 +105,28 @@ public:
 };
 
 // ==============================
-// Pre-emphasis (KFR convolution_filter)
+// Pre-emphasis
 // ==============================
 
 class PreEmphasisKfr final : public IPreEmphasis {
 public:
   Expected<PcmBuffer>
   process(const PcmSpan& in, const PreEmphasisParams& p) override {
-    if (in.sample_rate_hz == 0 || !(p.alpha >= 0.0f && p.alpha <= 1.0f))
+    if (in.sample_rate_hz == 0 || p.alpha < 0.0f || p.alpha > 1.0f)
       return tl::unexpected(UtilError::InvalidArgument);
 
     try {
       using T = float;
       kfr::univector<T> in_uv(in.samples.begin(), in.samples.end());
+      kfr::univector<T> y(in_uv.size());
 
-      // FIR [1, -alpha]
-      kfr::univector<T> fir(2);
-      fir[0] = 1.0f;
-      fir[1] = -static_cast<T>(p.alpha);
-
-      kfr::univector<T> y = kfr::convolve(in_uv, fir);
-
-      // Trim to input length for causal 1st-order pre-emphasis semantics.
-      if (y.size() > in_uv.size()) y.resize(in_uv.size());
+      if (!in_uv.empty()) {
+        const T a = static_cast<T>(p.alpha);
+        y[0] = in_uv[0]; // x[0] - a*x[-1] (x[-1]=0) => x[0]
+        for (size_t n = 1; n < in_uv.size(); ++n) {
+          y[n] = in_uv[n] - a * in_uv[n - 1]; // causal pre-emphasis
+        }
+      }
 
       PcmBuffer out;
       out.sample_rate_hz = in.sample_rate_hz;
@@ -146,7 +145,6 @@ public:
 // ==============================
 // Resampler (KFR resampler class)
 // ==============================
-
 class ResamplerKfr final : public IResampler {
 public:
   Expected<PcmBuffer>
@@ -156,19 +154,32 @@ public:
 
     try {
       using T = float;
+
+      // Copy input to KFR vector
       kfr::univector<T> in_uv(in.samples.begin(), in.samples.end());
-
-      // quality, out_sr, in_sr (as in your example)
-      auto r = kfr::resampler<T>(
-          static_cast<kfr::sample_rate_conversion_quality>(rp.quality),
-          static_cast<int>(rp.target_hz),
-          static_cast<int>(in.sample_rate_hz));
-
-      kfr::univector<T> out_uv;
-      r.process(out_uv, in_uv);
 
       PcmBuffer out;
       out.sample_rate_hz = rp.target_hz;
+      if (in_uv.empty()) return out; // empty in → empty out
+
+      // Clamp quality to valid range (KFR supports discrete levels, 0..8 is safe)
+      const int q = std::clamp(rp.quality, 0, 8);
+
+      // Build resampler: (quality, out_sr, in_sr)
+      auto r = kfr::resampler<T>(
+          static_cast<kfr::sample_rate_conversion_quality>(q),
+          static_cast<int>(rp.target_hz),
+          static_cast<int>(in.sample_rate_hz));
+
+      // Compute expected output length and pre-size output buffer
+      const double ratio = double(rp.target_hz) / double(in.sample_rate_hz);
+      const size_t out_len = static_cast<size_t>(std::llround(
+          in_uv.size() * ratio));
+      kfr::univector<T> out_uv(out_len);
+
+      // KFR: writes exactly out_uv.size() samples; returns number of input samples consumed
+      (void)r.process(out_uv, in_uv);
+
       out.samples = std::move(out_uv);
       return out;
     } catch (...) {
@@ -177,9 +188,9 @@ public:
   }
 
   void reset() noexcept override {
-    /* stateless (constructed per call) */
   }
 };
+
 
 // ==============================
 // Factory

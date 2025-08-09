@@ -127,8 +127,9 @@ public:
     // 2) Batch lookup all unique keys
     std::vector<FingerprintKey> keys;
     keys.reserve(key_to_qtimes.size());
-    for (const auto& kv : key_to_qtimes) keys.push_back(
-        FingerprintKey{kv.first});
+    for (const auto& kv : key_to_qtimes)
+      keys.push_back(
+          FingerprintKey{kv.first});
 
     auto lookupsE = index.lookup_batch(
         std::span<const FingerprintKey>(keys.data(), keys.size()));

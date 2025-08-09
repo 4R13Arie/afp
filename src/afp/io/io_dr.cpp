@@ -114,10 +114,12 @@ public:
     const SampleRateHz sr = channels[0].sample_rate_hz;
     const size_t N = channels[0].samples.size();
     for (const auto& ch : channels) {
-      if (ch.sample_rate_hz != sr) return tl::unexpected(
-          UtilError::SizeMismatch);
-      if (ch.samples.size() != N) return
-          tl::unexpected(UtilError::SizeMismatch);
+      if (ch.sample_rate_hz != sr)
+        return tl::unexpected(
+            UtilError::SizeMismatch);
+      if (ch.samples.size() != N)
+        return
+            tl::unexpected(UtilError::SizeMismatch);
     }
 
     PcmBuffer out;
@@ -235,8 +237,9 @@ private:
     auto mono = downmixer_->to_mono(spans);
     if (!mono) return tl::unexpected(mono.error());
 
-    if (params.normalize_rms) normalize_rms_inplace(
-        mono->samples, params.target_rms_dbfs);
+    if (params.normalize_rms)
+      normalize_rms_inplace(
+          mono->samples, params.target_rms_dbfs);
     // Dither ignored for float32.
 
     mono->sample_rate_hz = sr;
@@ -328,8 +331,9 @@ private:
     auto mono = downmixer_->to_mono(spans);
     if (!mono) return tl::unexpected(mono.error());
 
-    if (params.normalize_rms) normalize_rms_inplace(
-        mono->samples, params.target_rms_dbfs);
+    if (params.normalize_rms)
+      normalize_rms_inplace(
+          mono->samples, params.target_rms_dbfs);
     mono->sample_rate_hz = sr;
     return mono;
   }
@@ -406,8 +410,9 @@ private:
     auto mono = downmixer_->to_mono(spans);
     if (!mono) return tl::unexpected(mono.error());
 
-    if (params.normalize_rms) normalize_rms_inplace(
-        mono->samples, params.target_rms_dbfs);
+    if (params.normalize_rms)
+      normalize_rms_inplace(
+          mono->samples, params.target_rms_dbfs);
     mono->sample_rate_hz = sr;
     return mono;
   }

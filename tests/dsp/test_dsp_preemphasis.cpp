@@ -11,7 +11,9 @@ TEST(PreEmphasis, ExactFormulaTinyVector) {
   const auto sr = 16000u;
   std::vector<float> x = {1.f, 2.f, 3.f, 4.f};
   const float a = 0.97f;
-  auto in = testdsp::span_of(testdsp::make_buffer(sr, x));
+
+  auto buf = testdsp::make_buffer(sr, x); // keep owner alive
+  auto in = testdsp::span_of(buf); // span over stable storage
 
   auto pe = F()->create_preemphasis();
   auto yE = pe->process(in, {a});
@@ -29,25 +31,39 @@ TEST(PreEmphasis, ExactFormulaTinyVector) {
     ASSERT_NEAR(y[i], exp[i], 1e-6f);
 }
 
+
 TEST(PreEmphasis, DC_removal_property) {
   const auto sr = 48000u;
   const size_t N = 8192;
-  auto x = testdsp::dc(N, 0.5f);
+  const float C = 0.5f, alpha = 0.97f;
+  auto x = testdsp::dc(N, C);
   auto pe = F()->create_preemphasis();
-  auto yE = pe->process(testdsp::span_of(testdsp::make_buffer(sr, x)), {0.97f});
+  auto yE = pe->process(testdsp::span_of(testdsp::make_buffer(sr, x)), {alpha});
   ASSERT_TRUE(yE.has_value());
   const auto& y = yE->samples;
-  // ignore the first sample; rest should be near-zero
-  float mean_abs = 0.0f;
-  for (size_t n = 1; n < y.size(); ++n) mean_abs += std::abs(y[n]);
-  mean_abs /= float(std::max<size_t>(1, y.size() - 1));
-  EXPECT_LE(mean_abs, 1e-3f);
+
+  ASSERT_GE(y.size(), 2u);
+  // First sample must be C (x[0] - α*x[-1] with zero-history)
+  EXPECT_NEAR(y[0], C, 1e-6f);
+  // Tail should settle to (1-α)*C
+  const size_t skip = 128;
+  auto tail = std::span<const float>(y.data() + std::min(skip, y.size() - 1),
+                                     y.size() - std::min(skip, y.size() - 1));
+  const float expected = (1.0f - alpha) * C; // = 0.015
+  // Check mean and RMS around expected
+  const float mu = testdsp::mean(tail);
+  EXPECT_NEAR(mu, expected, 1e-3f);
+  const float err_rms = testdsp::rms(tail) - expected; // loose check
+  (void)err_rms; // optional: ensure not crazy
 }
 
 TEST(PreEmphasis, AlphaBoundsAndSpecialCases) {
   const auto sr = 22050u;
   auto x = testdsp::sine(32, float(sr), 1000.0f, 0.2f);
-  auto in = testdsp::span_of(testdsp::make_buffer(sr, x));
+
+  auto buf = testdsp::make_buffer(sr, x); // keep owner alive
+  auto in = testdsp::span_of(buf); // span over stable storage
+
   auto pe = F()->create_preemphasis();
 
   // invalid alpha

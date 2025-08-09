@@ -170,8 +170,9 @@ inline Expected<Groups> decode_groups(const std::uint8_t* data, size_t len) {
         times.push_back(prev);
       }
     } else {
-      if (p + 4ull * count > end) return
-          tl::unexpected(UtilError::IndexCorrupt);
+      if (p + 4ull * count > end)
+        return
+            tl::unexpected(UtilError::IndexCorrupt);
       for (std::uint32_t i = 0; i < count; ++i) {
         const std::uint32_t t = get_u32(p);
         p += 4;
@@ -234,8 +235,9 @@ public:
                              std::span<const FingerprintKey> keys,
                              std::span<const TimeMs> t_anchor_ms) override {
     if (!opened_) return tl::unexpected(UtilError::Unavailable);
-    if (keys.size() != t_anchor_ms.size()) return tl::unexpected(
-        UtilError::SizeMismatch);
+    if (keys.size() != t_anchor_ms.size())
+      return tl::unexpected(
+          UtilError::SizeMismatch);
     auto itK = keys.begin();
     auto itT = t_anchor_ms.begin();
     for (; itK != keys.end(); ++itK, ++itT) {
@@ -343,8 +345,9 @@ public:
 
   // Purpose: Lookup postings for a key. Average O(1)+decode.
   Expected<std::vector<Posting>> lookup(FingerprintKey key) const override {
-    if (!opened_.load(std::memory_order_acquire)) return tl::unexpected(
-        UtilError::Unavailable);
+    if (!opened_.load(std::memory_order_acquire))
+      return tl::unexpected(
+          UtilError::Unavailable);
 
     MDB_txn* txn = nullptr;
     int rc = mdb_txn_begin(env_, nullptr, MDB_RDONLY, &txn);
@@ -382,8 +385,9 @@ public:
   // Purpose: Batch lookups; sum of individual costs.
   Expected<std::vector<std::vector<Posting>>>
   lookup_batch(std::span<const FingerprintKey> keys) const override {
-    if (!opened_.load(std::memory_order_acquire)) return tl::unexpected(
-        UtilError::Unavailable);
+    if (!opened_.load(std::memory_order_acquire))
+      return tl::unexpected(
+          UtilError::Unavailable);
 
     std::vector<std::vector<Posting>> out;
     out.reserve(keys.size());
