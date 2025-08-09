@@ -123,6 +123,9 @@ if (BUILD_TESTING)
             tests/io/test_composite.cpp
             tests/io/test_edgecases.cpp
 
+            tests/peaks/test_peaks_factory.cpp
+            tests/peaks/test_peaks_finder.cpp
+
             tests/stft/test_stft_framer.cpp
             tests/stft/test_stft_window.cpp
             tests/stft/test_stft_fft.cpp
