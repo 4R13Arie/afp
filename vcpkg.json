@@ -1,18 +1,27 @@
 {
-  "name" : "afp",
-  "version-string" : "1.0.0",
-  "dependencies" : [ {
-    "name" : "gtest"
-  }, {
-    "name" : "kfr",
-    "features": ["dft"]
-  }, {
-    "name" : "tl-expected"
-  }, {
-    "name" : "vcpkg-cmake-config"
-  }, {
-    "name" : "vcpkg-cmake"
-  }, {
-    "name" : "lmdb"
-  }]
+  "name": "afp",
+  "version-string": "1.0.0",
+  "dependencies": [
+    {
+      "name": "gtest"
+    },
+    {
+      "name": "kfr",
+      "features": [
+        "dft"
+      ]
+    },
+    {
+      "name": "tl-expected"
+    },
+    {
+      "name": "vcpkg-cmake-config"
+    },
+    {
+      "name": "vcpkg-cmake"
+    },
+    {
+      "name": "lmdb"
+    }
+  ]
 }

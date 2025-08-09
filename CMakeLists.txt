@@ -12,9 +12,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Warnings & basic hygiene
 if (MSVC)
     add_compile_options(/W4 /permissive-)
-else()
+else ()
     add_compile_options(-Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion)
-endif()
+endif ()
 
 # Sanitizers (opt-in)
 option(AFP_USE_ASAN "Enable AddressSanitizer" OFF)
@@ -24,15 +24,15 @@ function(afp_apply_sanitizers target)
     if (AFP_USE_ASAN)
         target_compile_options(${target} PRIVATE -fsanitize=address -fno-omit-frame-pointer)
         target_link_options(${target} PRIVATE -fsanitize=address)
-    endif()
+    endif ()
     if (AFP_USE_UBSAN)
         target_compile_options(${target} PRIVATE -fsanitize=undefined -fno-omit-frame-pointer)
         target_link_options(${target} PRIVATE -fsanitize=undefined)
-    endif()
+    endif ()
     if (AFP_USE_TSAN)
         target_compile_options(${target} PRIVATE -fsanitize=thread -fno-omit-frame-pointer)
         target_link_options(${target} PRIVATE -fsanitize=thread)
-    endif()
+    endif ()
 endfunction()
 
 # -------------------------------------------------------
@@ -51,7 +51,7 @@ find_package(unofficial-lmdb CONFIG REQUIRED)       # provides unofficial::lmdb:
 include(CTest)  # sets BUILD_TESTING
 if (BUILD_TESTING)
     find_package(GTest CONFIG REQUIRED)               # provides GTest::gtest, GTest::gtest_main
-endif()
+endif ()
 
 # -------------------------------------------------------
 # Library target
@@ -108,12 +108,12 @@ if (BUILD_TESTING)
     set(AFP_TEST_SOURCES
             tests/io/test_utils.hpp
             tests/io/test_downmixer.cpp
-#            tests/io/test_normalize.cpp
-#            tests/io/test_wav.cpp
-#            tests/io/test_mp3.cpp
-#            tests/io/test_flac.cpp
-#            tests/io/test_composite.cpp
-#            tests/io/test_edgecases.cpp
+            tests/io/test_normalize.cpp
+            tests/io/test_wav.cpp
+            tests/io/test_mp3.cpp
+            tests/io/test_flac.cpp
+            tests/io/test_composite.cpp
+            tests/io/test_edgecases.cpp
     )
 
     add_executable(afp_tests ${AFP_TEST_SOURCES})
@@ -135,4 +135,4 @@ if (BUILD_TESTING)
 
     include(GoogleTest)
     gtest_discover_tests(afp_tests)
-endif()
+endif ()
