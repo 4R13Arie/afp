@@ -3,5 +3,5 @@
 #include <iostream>
 
 void afp_hello() {
-    std::cout << "Hello, World!" << std::endl;
+  std::cout << "Hello, World!" << std::endl;
 }

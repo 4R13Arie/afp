@@ -15,7 +15,7 @@ TEST(Downmixer, MonoPassthrough) {
   std::array<PcmSpan, 1> chans{ch};
   auto outE = dm->to_mono(chans);
   ASSERT_TRUE(outE.has_value());
-  const auto &out = *outE;
+  const auto& out = *outE;
   ASSERT_EQ(out.sample_rate_hz, sr);
   ASSERT_EQ(out.samples.size(), x.size());
   for (size_t i = 0; i < x.size(); ++i) {
@@ -34,7 +34,7 @@ TEST(Downmixer, StereoAverage) {
   std::array<PcmSpan, 2> chans{chL, chR};
   auto outE = dm->to_mono(chans);
   ASSERT_TRUE(outE.has_value());
-  for (float v: outE->samples)
+  for (float v : outE->samples)
     ASSERT_NEAR(v, 0.0f, 1e-6f);
 }
 
@@ -44,7 +44,7 @@ TEST(Downmixer, EnergyPreservingAverageRandomStereo) {
   const size_t N = 1000;
   std::uniform_real_distribution<float> dist(-1.f, 1.f);
   std::vector<float> L(N), R(N);
-  auto &gen = testio::rng();
+  auto& gen = testio::rng();
   for (size_t i = 0; i < N; ++i) {
     L[i] = dist(gen);
     R[i] = dist(gen);

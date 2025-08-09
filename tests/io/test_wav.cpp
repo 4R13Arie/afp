@@ -21,8 +21,10 @@ TEST(WavDecode, Pcm16Mono_BytesAndFile) {
   auto d = new_decoder();
 
   // bytes
-  auto outE = d->decode_bytes(std::span<const std::byte>(reinterpret_cast<const std::byte *>(wav.data()), wav.size()),
-                              p);
+  auto outE = d->decode_bytes(
+      std::span<const std::byte>(reinterpret_cast<const std::byte*>(wav.data()),
+                                 wav.size()),
+      p);
   ASSERT_TRUE(outE.has_value());
   EXPECT_EQ(outE->sample_rate_hz, sr);
   EXPECT_EQ(outE->samples.size(), mono.size());
@@ -47,7 +49,8 @@ TEST(WavDecode, Float32Mono_ValuesPreserved) {
   p.dither = false; // (already default false, but explicit)
 
   auto outE = d->decode_bytes(
-    std::span<const std::byte>(reinterpret_cast<const std::byte *>(wav.data()), wav.size()), p);
+      std::span<const std::byte>(reinterpret_cast<const std::byte*>(wav.data()),
+                                 wav.size()), p);
   ASSERT_TRUE(outE.has_value());
   ASSERT_EQ(outE->samples.size(), mono.size());
 
@@ -69,7 +72,8 @@ TEST(WavDecode, StereoDownmixAverage) {
   p.dither = false;
 
   auto outE = d->decode_bytes(
-    std::span<const std::byte>(reinterpret_cast<const std::byte *>(wav.data()), wav.size()), p);
+      std::span<const std::byte>(reinterpret_cast<const std::byte*>(wav.data()),
+                                 wav.size()), p);
   ASSERT_TRUE(outE.has_value());
   ASSERT_EQ(outE->samples.size(), L.size());
 
@@ -107,8 +111,10 @@ TEST(WavDecode, CorruptionTruncatedHeader) {
   wav.resize(8); // too short
   auto d = new_decoder();
   DecodeParams p{};
-  auto out = d->decode_bytes(std::span<const std::byte>(reinterpret_cast<const std::byte *>(wav.data()), wav.size()),
-                             p);
+  auto out = d->decode_bytes(
+      std::span<const std::byte>(reinterpret_cast<const std::byte*>(wav.data()),
+                                 wav.size()),
+      p);
   ASSERT_FALSE(out.has_value());
   ASSERT_EQ(out.error(), afp::util::UtilError::DecodeError);
 }
