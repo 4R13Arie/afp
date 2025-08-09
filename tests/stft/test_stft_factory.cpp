@@ -9,12 +9,12 @@ TEST(Factory, CreatesAll) {
   auto fac = make_default_stft_factory();
   ASSERT_TRUE(fac != nullptr);
 
-  auto fr  = fac->create_framer();
+  auto fr = fac->create_framer();
   auto win = fac->create_window();
   auto fft = fac->create_fft();
   auto drv = fac->create_driver();
 
-  EXPECT_TRUE(fr  != nullptr);
+  EXPECT_TRUE(fr != nullptr);
   EXPECT_TRUE(win != nullptr);
   EXPECT_TRUE(fft != nullptr);
   EXPECT_TRUE(drv != nullptr);
@@ -28,7 +28,7 @@ TEST(Factory, FFT_Instances_Independent) {
   const std::uint32_t N = 1024;
   auto fb = afp::util::FrameBlock{};
   fb.frame_size = N;
-  fb.hop_size   = N;
+  fb.hop_size = N;
   fb.num_frames = 1u;
   auto step = teststft::step(N);
   copy_to_univector(step, fb.data);

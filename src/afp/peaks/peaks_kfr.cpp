@@ -117,8 +117,9 @@ public:
         for (int tt = t0; tt <= t1 && is_max; ++tt) {
           const auto nrow = row_span(S, static_cast<std::uint32_t>(tt));
           for (int ff = f0; ff <= f1; ++ff) {
-            if (tt == static_cast<int>(t) && ff == static_cast<int>(f)) continue
-                ;
+            if (tt == static_cast<int>(t) && ff == static_cast<int>(f))
+              continue
+                  ;
             if (nrow[static_cast<std::size_t>(ff)] > v) {
               is_max = false;
               break;
@@ -172,7 +173,8 @@ public:
           if (ok) hi.push_back(p);
           if (hi.size() >= std::max<std::size_t>(
                   min_per_frame,
-                  max_per_frame ? max_per_frame : hi.size() + 1)) break;
+                  max_per_frame ? max_per_frame : hi.size() + 1))
+            break;
         }
         // Keep natural order by frequency
         std::sort(hi.begin(), hi.end(),

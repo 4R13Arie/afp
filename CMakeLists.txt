@@ -112,6 +112,9 @@ if (BUILD_TESTING)
             tests/dsp/test_dsp_preemphasis.cpp
             tests/dsp/test_dsp_resampler.cpp
 
+            tests/features/test_features_factory.cpp
+            tests/features/test_features_logspectrogram.cpp
+
             tests/io/test_downmixer.cpp
             tests/io/test_normalize.cpp
             tests/io/test_wav.cpp

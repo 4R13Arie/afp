@@ -11,7 +11,7 @@ using afp::util::UtilError;
 static FrameBlock one_frame(const std::vector<float>& x) {
   FrameBlock fb;
   fb.frame_size = static_cast<std::uint32_t>(x.size());
-  fb.hop_size   = fb.frame_size;
+  fb.hop_size = fb.frame_size;
   fb.num_frames = 1;
   copy_to_univector(x, fb.data);
   return fb;
@@ -52,8 +52,8 @@ TEST(FFT, BinDominance_Sine) {
   auto fft = fac->create_fft();
 
   const std::uint32_t sr = 48000;
-  const std::uint32_t N  = 1024;
-  const std::uint32_t k  = 5;
+  const std::uint32_t N = 1024;
+  const std::uint32_t k = 5;
   const float f = (float(k) * float(sr)) / float(N);
 
   auto x = sine(N, sr, f);
@@ -80,7 +80,8 @@ TEST(FFT, BinDominance_Sine) {
   for (std::size_t i = 0; i < mag.size(); ++i)
     if (i != dom) max_other = std::max(max_other, mag[i]);
 
-  const float db = 20.0f * std::log10((mag[dom] + 1e-12f) / (max_other + 1e-12f));
+  const float db = 20.0f * std::log10(
+                       (mag[dom] + 1e-12f) / (max_other + 1e-12f));
   EXPECT_GE(db, 20.0f);
 }
 
@@ -131,7 +132,7 @@ TEST(FFT, Impulse_FlatSpectrum_NoNaN) {
   std::vector<float> mags(spec.num_bins, 0.0f);
   for (std::size_t i = 0; i < spec.num_bins; ++i) {
     auto c = spec.bins[i];
-    float m = std::sqrt(c.real()*c.real() + c.imag()*c.imag());
+    float m = std::sqrt(c.real() * c.real() + c.imag() * c.imag());
     ASSERT_TRUE(std::isfinite(m));
     mags[i] = m;
     mean_mag += m;

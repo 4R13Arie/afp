@@ -34,7 +34,7 @@ inline std::vector<float> sine(std::size_t N, std::uint32_t sr, float f) {
 inline PcmBuffer make_buffer(std::uint32_t sr, const std::vector<float>& x) {
   PcmBuffer b;
   b.sample_rate_hz = sr;
-  b.samples.resize(x.size());                  // works for kfr::univector
+  b.samples.resize(x.size()); // works for kfr::univector
   std::copy_n(x.data(), x.size(), b.samples.data());
   // or: std::memcpy(b.samples.data(), x.data(), x.size() * sizeof(float));
   return b;
@@ -71,7 +71,8 @@ inline std::vector<float> mag_spectrum_real(const std::vector<float>& x) {
     const double ang = -2.0 * M_PI * double(k) / double(N);
     for (std::size_t n = 0; n < N; ++n) {
       double phase = ang * double(n);
-      acc += std::complex<double>(std::cos(phase), std::sin(phase)) * double(x[n]);
+      acc += std::complex<double>(std::cos(phase), std::sin(phase)) *
+          double(x[n]);
     }
     mag[k] = static_cast<float>(std::abs(acc));
   }
@@ -88,9 +89,9 @@ inline afp::util::PcmSpan span_of(const afp::util::PcmBuffer& b) {
   return afp::util::PcmSpan{b.sample_rate_hz, b.samples};
 }
 
-inline void copy_to_univector(const std::vector<float>& src, kfr::univector<float>& dst) {
+inline void copy_to_univector(const std::vector<float>& src,
+                              kfr::univector<float>& dst) {
   dst.resize(src.size());
   if (!src.empty()) std::copy_n(src.data(), src.size(), dst.data());
 }
-
 } // namespace testutils
